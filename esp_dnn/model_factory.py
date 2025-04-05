@@ -101,7 +101,7 @@ def build_model(n_features_per_atom, n_ys_per_atom, space=SPACE, n_gpus=None):
 def custom_load_model(model_file):
     return load_model(model_file, custom_objects={
         "mean_absolute_error_nans": mean_absolute_error_nans,
-        "GraphConv": GraphConv})
+        "GraphConv": GraphConv}, compile=False)
 
 
 def save_model(model, output_file, weights_only=False):

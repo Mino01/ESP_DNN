@@ -140,14 +140,13 @@ class MolChargePredictor(object):
         from .model_factory import custom_load_model
 
         self.model = custom_load_model(model_file)
-        self.model._make_predict_function()
         self.debug = debug
         self.clean_tmp_dir = clean_tmp_dir
 
         self.featurizer = Featurize(features_file=features_file, pad_value=0.0)
         self.skip_norm_mask = np.array(
             [v.startswith("is_") for v in self.featurizer.features])
-        with open(norm_params_file) as f:
+        with open(norm_params_file, "rb") as f:
             self.norm_params_dict = pickle.load(f)
         self.neutralizer = MolNeutralizer()
         self.equivalent_atoms = [(Chem.MolFromSmarts(ea[0]), ea[1])
