@@ -33,8 +33,10 @@ from rdkit.Chem import Lipinski
 from rdkit.Chem import rdMolDescriptors, rdPartialCharges
 from rdkit.Chem.rdchem import HybridizationType
 
+## Removed: from rdkit.Chem.AtomPairs.Utils import NumPiElectrons
+
+
 from os.path import join, dirname, abspath
-from rdkit.Chem.AtomPairs.Utils import NumPiElectrons
 
 SCRIPT_PATH = dirname(abspath(__file__))
 
