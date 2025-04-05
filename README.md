@@ -71,7 +71,7 @@ in the same directory for comparison.
 
 ### Running prediction on ligand files:
 ```bash
-python -m esp_dnn.predict -m ligand -i examples/ligands
+python -m esp_dnn.predict -i examples/ligands -m esp_dnn/model/trained_model.h5
 ```
 
 ### Running prediction on protein files:
