@@ -7,11 +7,15 @@ import glob
 import logging
 import subprocess
 import argparse
-from rdkit import Chem
-from esp_dnn.model_factory import custom_load_model
-from esp_dnn.featurize import MoleculeFeaturizer
-from esp_dnn.predict_utils import write_pqr
 import numpy as np
+
+try:
+    from rdkit import Chem
+except ImportError:
+    raise ImportError("RDKit is required to run this script. Please install it with 'conda install -c rdkit rdkit'.")
+
+from esp_dnn.model_factory import custom_load_model
+from esp_dnn.featurize import Featurize
 
 log = logging.getLogger("predict")
 
@@ -51,6 +55,28 @@ def process_input_files(input_dir, output_dir):
     return pdb_files
 
 
+def write_pqr(mol, charges, output_file, all_atoms):
+    """
+    Writes a PQR file with coordinates, predicted charges, and placeholder radii.
+    Includes all atoms to match ESP_DNN prediction output.
+    """
+    conf = mol.GetConformer()
+
+    with open(output_file, "w") as f:
+        for i, atom in enumerate(all_atoms):
+            idx = atom.GetIdx()
+            symbol = atom.GetSymbol()
+            pos = conf.GetAtomPosition(idx)
+            charge = charges[i]
+            radius = 1.5  # Placeholder; could use a real van der Waals lookup
+
+            f.write(
+                f"ATOM  {i+1:5d} {symbol:<4s} MOL     1    "
+                f"{pos.x:8.3f} {pos.y:8.3f} {pos.z:8.3f}"
+                f"{charge:8.4f} {radius:8.4f}"
+            )
+
+
 def predict_charges(model, featurizer, pdb_file):
     with open(pdb_file, 'r') as f:
         pdb_block = f.read()
@@ -61,14 +87,17 @@ def predict_charges(model, featurizer, pdb_file):
         return
 
     features_array, neighbours_array = featurizer.get_mol_fetaures(mol)
-    heavy_atoms = [a for a in mol.GetAtoms() if a.GetAtomicNum() != 1]
+    all_atoms = list(mol.GetAtoms())
+    all_atoms = list(mol.GetAtoms())
 
-    charges = model.predict([features_array, neighbours_array])[0]
-    if len(charges) != len(heavy_atoms):
+    charges = model.predict(
+        [np.expand_dims(features_array, axis=0), np.expand_dims(neighbours_array, axis=0)]
+    )[0]
+    if len(charges) != len(all_atoms):
         raise ValueError("Mismatch between atoms and predicted charges")
 
     pqr_file = pdb_file.replace(".pdb", ".pqr")
-    write_pqr(mol, charges, pqr_file)
+    write_pqr(mol, charges, pqr_file, all_atoms)
     log.info("Wrote: %s", pqr_file)
 
 
@@ -96,7 +125,7 @@ def main():
         return
 
     model = custom_load_model(args.model)
-    featurizer = MoleculeFeaturizer()
+    featurizer = Featurize()
 
     for pdb_file in pdb_files:
         try:
