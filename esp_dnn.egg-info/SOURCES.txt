@@ -8,6 +8,7 @@ esp_dnn/data_processing.py
 esp_dnn/featurize.py
 esp_dnn/graph_conv.py
 esp_dnn/model_factory.py
+esp_dnn/patch_keras_import.py
 esp_dnn/predict.py
 esp_dnn.egg-info/PKG-INFO
 esp_dnn.egg-info/SOURCES.txt

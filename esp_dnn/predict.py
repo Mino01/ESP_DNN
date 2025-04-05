@@ -139,7 +139,6 @@ class MolChargePredictor(object):
         import tensorflow as tf
         from .model_factory import custom_load_model
 
-        self.graph = tf.get_default_graph()
         self.model = custom_load_model(model_file)
         self.model._make_predict_function()
         self.debug = debug
@@ -259,9 +258,8 @@ class MolChargePredictor(object):
 
             # https://github.com/keras-team/keras/issues/5640
             # predict charges
-            with self.graph.as_default():
-                charges = self.model.predict(
-                    [features_array, neighbours_array]).flatten()
+            charges = self.model.predict(
+                [features_array, neighbours_array]).flatten()
 
             # Because we predict charge on each atom individually,
             # they might not add up to zero.
@@ -369,8 +367,10 @@ def pli_molfile2pdbblock(input_file):
         return None
 
 
+from pathlib import Path
+
 def run(mode, input_dir, output_dir, stop_on_error):
-    log.info("Ruuning in %s mode" % mode)
+    log.info("Running in %s mode" % mode)
     if not os.path.isdir(input_dir):
         raise ValueError("Input directory (%s) does not exist" % input_dir)
     input_dir = os.path.abspath(input_dir)
@@ -378,6 +378,12 @@ def run(mode, input_dir, output_dir, stop_on_error):
         output_dir = input_dir
     log.info("Input dir is %s" % input_dir)
     log.info("Output dir is %s" % output_dir)
+
+    print(f"[DEBUG] Scanning for PQR files in: {input_dir}")
+    input_files = sorted(Path(input_dir).glob("*.pqr"))
+    print(f"[DEBUG] Found input files: {[str(f) for f in input_files]}")
+
+
 
     # convert ligand mol files to pdb files
     if mode == "ligand":
@@ -391,6 +397,7 @@ def run(mode, input_dir, output_dir, stop_on_error):
             Chem.MolToPDBFile(mol, pdb_file)
 
     all_files = glob.glob(os.path.join(input_dir, "*.pdb"))
+    print(f"[DEBUG] Re-checking input_files just before error: {[str(f) for f in input_files]}")
 
     if not len(all_files):
         log.error("No input files found in %s directory" % input_dir)

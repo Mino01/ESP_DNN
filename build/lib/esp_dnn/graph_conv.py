@@ -17,7 +17,7 @@
 from keras import activations, initializers, regularizers, constraints
 from keras import backend as K
 from keras.constraints import min_max_norm
-from keras.engine.topology import Layer, InputSpec
+from tensorflow.keras.layers import Layer, InputSpec
 import tensorflow as tf
 
 
