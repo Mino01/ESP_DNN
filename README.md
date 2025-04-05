@@ -71,12 +71,12 @@ in the same directory for comparison.
 
 ### Running prediction on ligand files:
 ```bash
-python -m esp_dnn.predict -m ligand -i {THIS_REPOSITORY}/examples/ligands
+python -m esp_dnn.predict -m ligand -i examples/ligands
 ```
 
 ### Running prediction on protein files:
 ```bash
-python -m esp_dnn.predict -m protein -i {THIS_REPOSITORY}/examples/proteins
+python -m esp_dnn.predict -m protein -i examples/proteins
 ```
 
 Compare the PQR files generated using the above commands with the corresponding
