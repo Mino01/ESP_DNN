@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: esp_dnn
+Version: 1.0.0
+Summary: Graph Convolutional deep neural network for generating molecular ESP surfaces
+Author: Prakash Chandra Rathi
+Author-email: prakash.rathi@astx.com
+License: Apache 2.0
+License-File: LICENCE
