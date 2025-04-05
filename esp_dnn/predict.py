@@ -147,7 +147,7 @@ class MolChargePredictor(object):
         self.skip_norm_mask = np.array(
             [v.startswith("is_") for v in self.featurizer.features])
         with open(norm_params_file, "rb") as f:
-            self.norm_params_dict = pickle.load(f)
+            self.norm_params_dict = pickle.load(f,encoding="latin1")
         self.neutralizer = MolNeutralizer()
         self.equivalent_atoms = [(Chem.MolFromSmarts(ea[0]), ea[1])
                                  for ea in EQUIVALENT_ATOMS]
