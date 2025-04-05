@@ -117,25 +117,11 @@ class GraphConv(Layer):
         self.built = True
 
     def call(self, inputs):
-        x = inputs[0]  # n_atom * n_props
-        d = inputs[1]  # [n_atoms, n_atoms]
+        x, d = inputs
+        self_output = tf.linalg.matmul(x, self.kernel_dense)
+        neigh_output = tf.matmul(d, self_output)  # replaces K.batch_dot(...)
+        return self_output + neigh_output
 
-        self_output = K.dot(x, self.kernel_dense)
-        # sum values from the neighbors
-        neigh_output = K.batch_dot(d, self_output, axes=[2, 1])
-
-        if self.conv_wts == "single":
-            neigh_output = neigh_output * self.kernel_neigh[0]
-            self_output = self_output * self.kernel_self[0]
-        elif self.conv_wts == "all":
-            neigh_output = neigh_output * self.kernel_neigh
-            self_output = self_output * self.kernel_self
-
-        output = self_output + neigh_output
-        if self.use_bias is not None:
-            output += K.reshape(self.bias, (1, self.width))
-        output = self.activation(output)
-        return output
 
     def compute_output_shape(self, input_shape):
         return (input_shape[0][0], input_shape[0][1], self.width)

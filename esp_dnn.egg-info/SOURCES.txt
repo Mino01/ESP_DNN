@@ -17,7 +17,7 @@ esp_dnn.egg-info/dependency_links.txt
 esp_dnn.egg-info/top_level.txt
 esp_dnn/data/atom_data.csv
 esp_dnn/data/feature_list.dat
-esp_dnn/ext/pli/bin/pli
+esp_dnn/ext/pli/Makefile
 esp_dnn/ext/pli/params/chemscore.params
 esp_dnn/ext/pli/params/contacts.settings
 esp_dnn/ext/pli/params/elements.pli

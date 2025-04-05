@@ -130,9 +130,23 @@ def n_valence_electrons(a):
 
 
 def n_pi_electrons(a):
-    """ returns number of pi electrons """
+    """
+    Approximate pi electron count based on atom type and hybridization.
+    """
+    from rdkit.Chem.rdchem import HybridizationType
 
-    return NumPiElectrons(a)
+    symbol = a.GetSymbol()
+    hyb = a.GetHybridization()
+    n_double = a.GetTotalNumHs() + a.GetExplicitValence() - a.GetDegree()
+
+    # Simple heuristic
+    if symbol in ("C", "N", "O", "S"):
+        if hyb == HybridizationType.SP2:
+            return 1
+        elif hyb == HybridizationType.SP:
+            return 2
+    return 0
+
 
 
 def n_lone_pairs(a):
